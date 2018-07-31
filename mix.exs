@@ -8,8 +8,8 @@ defmodule CodeclimateCredo.Mixfile do
       app: :codeclimate_credo,
       version: version(),
       elixir: "~> 1.5",
-      build_embedded: Mix.env == :prod,
-      start_permanent: Mix.env == :prod,
+      build_embedded: Mix.env() == :prod,
+      start_permanent: Mix.env() == :prod,
       deps: deps(),
       escript: [
         main_module: Codeclimate.CLI,
