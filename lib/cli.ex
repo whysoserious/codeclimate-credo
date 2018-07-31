@@ -14,7 +14,7 @@ defmodule Codeclimate.CLI do
 
   @doc false
   def main(_argv) do
-    Credo.start nil, nil
+    Credo.start(nil, nil)
 
     %Execution{argv: []}
     |> Task.ParseOptions.call(nil)
@@ -28,37 +28,49 @@ defmodule Codeclimate.CLI do
   end
 
   defp load_json_config do
-    case File.read @config_file do
-      {:ok, config} -> config |> Poison.decode!
+    case File.read(@config_file) do
+      {:ok, config} -> config |> Poison.decode!()
       _ -> %{}
     end
   end
 
-  defp set_include_paths(%Execution{files: %{included: ["/code/**/*.{ex,exs}"]}} = exec, %{"include_paths" => paths}) when is_list(paths) do
+  defp set_include_paths(%Execution{files: %{included: ["/code/**/*.{ex,exs}"]}} = exec, %{
+         "include_paths" => paths
+       })
+       when is_list(paths) do
     update_include_paths(exec, paths)
   end
 
-  defp set_include_paths(%Execution{files: %{included: ["/code/lib" <> _, "/code/src" <> _, "/code/web" <> _, "/code/apps" <> _]}} = exec, %{"include_paths" => paths}) when is_list(paths) do
-      update_include_paths(exec, paths)
+  defp set_include_paths(
+         %Execution{
+           files: %{
+             included: ["/code/lib" <> _, "/code/src" <> _, "/code/web" <> _, "/code/apps" <> _]
+           }
+         } = exec,
+         %{"include_paths" => paths}
+       )
+       when is_list(paths) do
+    update_include_paths(exec, paths)
   end
 
   defp set_include_paths(exec, _), do: exec
 
   defp update_include_paths(exec, paths) do
-    paths = paths
-            |> List.delete("deps/")
-            |> List.delete("build/")
-            |> Enum.map(fn (path) ->
-              if path |> String.ends_with?("/") do
-                "#{path}**/*.{ex,exs}"
-              else
-                if ~r/\.ex|\.exs$/ |> Regex.match?(path) do
-                  path
-                end
-              end
-            end)
-            |> Enum.reject(&(!&1))
+    paths =
+      paths
+      |> List.delete("deps/")
+      |> List.delete("build/")
+      |> Enum.map(fn path ->
+        if path |> String.ends_with?("/") do
+          "#{path}**/*.{ex,exs}"
+        else
+          if ~r/\.ex|\.exs$/ |> Regex.match?(path) do
+            path
+          end
+        end
+      end)
+      |> Enum.reject(&(!&1))
 
-    %Execution{exec | files: %{ exec.files | included: paths } }
+    %Execution{exec | files: %{exec.files | included: paths}}
   end
 end

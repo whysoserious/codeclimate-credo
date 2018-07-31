@@ -9,10 +9,11 @@ defmodule Codeclimate.Command do
 
   @doc false
   def run(%Execution{help: true}), do: nil
+
   def run(exec) do
     exec
     |> load_and_validate_source_files()
-    |> Runner.prepare_config
+    |> Runner.prepare_config()
     |> print_before_info()
     |> run_checks()
     |> print_results_and_summary()
@@ -21,11 +22,11 @@ defmodule Codeclimate.Command do
 
   defp load_and_validate_source_files(exec) do
     {time_load, {valid_source_files, _invalid_source_files}} =
-      :timer.tc fn ->
+      :timer.tc(fn ->
         exec
-        |> Sources.find
-        |> Credo.Backports.Enum.split_with(&(&1.valid?))
-      end
+        |> Sources.find()
+        |> Credo.Backports.Enum.split_with(& &1.valid?)
+      end)
 
     exec
     |> Execution.put_source_files(valid_source_files)
@@ -45,9 +46,9 @@ defmodule Codeclimate.Command do
     source_files = Execution.get_source_files(exec)
 
     {time_run, :ok} =
-      :timer.tc fn ->
+      :timer.tc(fn ->
         Runner.run(source_files, exec)
-      end
+      end)
 
     Execution.put_assign(exec, "credo.time.run_checks", time_run)
   end
@@ -67,7 +68,7 @@ defmodule Codeclimate.Command do
   defp determine_success(exec) do
     issues =
       exec
-      |> Execution.get_issues
+      |> Execution.get_issues()
       |> Filter.important(exec)
       |> Filter.valid_issues(exec)
 

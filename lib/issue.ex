@@ -24,7 +24,7 @@ defmodule Codeclimate.Issue do
     Credo.Check.Warning.UnusedListOperation => ["Bug Risk"],
     Credo.Check.Warning.UnusedStringOperation => ["Bug Risk"],
     Credo.Check.Warning.UnusedTupleOperation => ["Bug Risk"],
-    Credo.Check.Warning.OperationWithConstantResult => ["Bug Risk"],
+    Credo.Check.Warning.OperationWithConstantResult => ["Bug Risk"]
   }
 
   defp categories(issue) do
@@ -33,9 +33,9 @@ defmodule Codeclimate.Issue do
 
   defp check_name(issue) do
     issue
-    |> Module.split
-    |> List.last
-    |> Macro.underscore
+    |> Module.split()
+    |> List.last()
+    |> Macro.underscore()
   end
 
   def json(issue) do
@@ -55,6 +55,7 @@ defmodule Codeclimate.Issue do
           end: issue.line_no || 1
         }
       }
-    } |> Poison.encode!
+    }
+    |> Poison.encode!()
   end
 end

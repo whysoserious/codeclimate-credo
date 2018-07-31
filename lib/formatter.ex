@@ -22,7 +22,9 @@ defmodule Codeclimate.Formatter do
     |> Enum.join("\0")
     |> print
 
-    debug("Finished! (#{format_in_seconds(time_load)}s to load, #{format_in_seconds(time_run)}s running checks)")
+    debug(
+      "Finished! (#{format_in_seconds(time_load)}s to load, #{format_in_seconds(time_run)}s running checks)"
+    )
   end
 
   defp format_in_seconds(t) do
@@ -31,7 +33,7 @@ defmodule Codeclimate.Formatter do
     if t < 10 do
       "0.0#{t}"
     else
-      t = div t, 10
+      t = div(t, 10)
       "#{div(t, 10)}.#{rem(t, 10)}"
     end
   end
